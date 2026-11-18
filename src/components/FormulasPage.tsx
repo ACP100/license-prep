@@ -1,0 +1,141 @@
+import { useMemo, useState } from "react";
+import katex from "katex";
+import { X } from "./Icons";
+import { FORMULA_GLOSSARY } from "../data/formulaGlossary";
+import TOPICS from "../data/topics";
+import type { TopicId } from "../data/topics";
+
+interface FormulasPageProps {
+  onClose: () => void;
+}
+
+function Formula({ tex }: { tex: string }) {
+  const html = useMemo(() => {
+    try {
+      return katex.renderToString(tex, { displayMode: true, throwOnError: false });
+    } catch {
+      return tex;
+    }
+  }, [tex]);
+  return <div className="overflow-x-auto" dangerouslySetInnerHTML={{ __html: html }} />;
+}
+
+export function FormulasPage({ onClose }: FormulasPageProps) {
+  const [search, setSearch] = useState("");
+  const [activeTopic, setActiveTopic] = useState<TopicId | "all">("all");
+
+  const topicById = useMemo(() => new Map(TOPICS.map((t) => [t.id, t])), []);
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return FORMULA_GLOSSARY.filter((f) => {
+      if (activeTopic !== "all" && f.topic !== activeTopic) return false;
+      if (!q) return true;
+      return `${f.name} ${f.legend}`.toLowerCase().includes(q);
+    });
+  }, [search, activeTopic]);
+
+  const topicsWithFormulas = useMemo(
+    () => TOPICS.filter((t) => FORMULA_GLOSSARY.some((f) => f.topic === t.id)),
+    [],
+  );
+
+  return (
+    <div className="h-screen overflow-y-auto scrollbar-thin bg-[var(--bg)]">
+      <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--border)] bg-[var(--bg2)]/90 backdrop-blur-md px-4 py-3 min-[901px]:px-8">
+        <h1 className="font-[family:var(--serif)] text-lg font-bold text-[var(--text)]">
+          Formula reference
+        </h1>
+        <button
+          onClick={onClose}
+          className="p-2 hover:bg-[var(--bg3)] rounded-full transition-colors text-[var(--text2)] hover:text-[var(--text)]"
+          aria-label="Close"
+        >
+          <X size={20} />
+        </button>
+      </div>
+
+      <div className="max-w-3xl mx-auto px-4 py-10 min-[901px]:px-8">
+        <p className="text-[var(--text2)] leading-relaxed mb-6">
+          Every named formula that shows up in a question explanation, with what each symbol
+          means and its unit. The same legends appear inline under the formula wherever it's used
+          in an explanation — this page is just all of them in one place to browse or search.
+        </p>
+
+        <div className="flex flex-col gap-3 mb-8">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search formulas (e.g. reactance, gain, interest)..."
+            className="w-full bg-[var(--bg2)] border border-[var(--border)] rounded-lg px-4 py-2.5 text-sm text-[var(--text)] placeholder:text-[var(--text3)] focus:outline-none focus:border-[var(--accent)]"
+          />
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setActiveTopic("all")}
+              className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors ${
+                activeTopic === "all"
+                  ? "bg-[var(--text)] text-[var(--bg)]"
+                  : "bg-[var(--bg2)] border border-[var(--border)] text-[var(--text2)] hover:border-[var(--accent)]"
+              }`}
+            >
+              All chapters
+            </button>
+            {topicsWithFormulas.map((t) => (
+              <button
+                key={t.id}
+                onClick={() => setActiveTopic(t.id)}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors ${
+                  activeTopic === t.id
+                    ? "text-white"
+                    : "bg-[var(--bg2)] border border-[var(--border)] text-[var(--text2)] hover:border-[var(--accent)]"
+                }`}
+                style={activeTopic === t.id ? { backgroundColor: t.color } : undefined}
+              >
+                {t.code}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {filtered.length === 0 ? (
+          <div className="text-center text-[var(--text3)] py-16 italic">
+            No formulas match that search.
+          </div>
+        ) : (
+          <div className="flex flex-col gap-4">
+            {filtered.map((f) => {
+              const topic = topicById.get(f.topic);
+              return (
+                <div
+                  key={f.id}
+                  className="rounded-lg border border-[var(--border)] bg-[var(--bg2)] px-5 py-5"
+                >
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <h3 className="font-[family:var(--serif)] text-base font-bold text-[var(--text)]">
+                      {f.name}
+                    </h3>
+                    {topic && (
+                      <span
+                        className="shrink-0 text-[0.65rem] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md"
+                        style={{ color: topic.color, backgroundColor: topic.bg }}
+                      >
+                        {topic.code}
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-[var(--text)] mb-3">
+                    <Formula tex={f.formula} />
+                  </div>
+                  <div className="text-[0.85rem] leading-relaxed text-[var(--text3)] italic border-t border-[var(--border)] pt-3">
+                    Where: {f.legend}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
