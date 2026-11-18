@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NEC Computer Licence Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Layout: sticky section rail on the left, one working column on the right; stacks on phones. */
+  --ink:#16213a;
+  --muted:#5b6478;
+  --paper:#f5f6f9;
+  --surface:#ffffff;
+  --line:#dde1ea;
+  --navy:#173d8c;      /* primary accent, from the flag's border blue */
+  --crimson:#c4122f;   /* sparing accent for deadlines */
+  --navy-soft:#e7edf9;
+  --ok:#1d7a4a; --ok-soft:#e3f3ea;
+  --warn:#9a5b00; --warn-soft:#fbf0dc;
+  --bad:#b0122b; --bad-soft:#fbe5e8;
+  --display:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#e6e9f2; --muted:#a2aabd; --paper:#0f1422; --surface:#161d2f; --line:#2a3350;
+    --navy:#8fb0ff; --crimson:#ff6b7f; --navy-soft:#1e2a4a;
+    --ok:#6fd39c; --ok-soft:#143524; --warn:#f2b759; --warn-soft:#3a2b10; --bad:#ff8193; --bad-soft:#3d1820;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#e6e9f2; --muted:#a2aabd; --paper:#0f1422; --surface:#161d2f; --line:#2a3350;
+  --navy:#8fb0ff; --crimson:#ff6b7f; --navy-soft:#1e2a4a;
+  --ok:#6fd39c; --ok-soft:#143524; --warn:#f2b759; --warn-soft:#3a2b10; --bad:#ff8193; --bad-soft:#3d1820;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important}}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 15.5px/1.55 var(--body)}
+a{color:var(--navy);text-underline-offset:2px}
+a:focus-visible,button:focus-visible,input:focus-visible,label:focus-within{outline:2px solid var(--navy);outline-offset:2px;border-radius:4px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(28px,4vw,40px);font-weight:700;letter-spacing:-.01em}
+h2{font-size:24px;font-weight:600}
+h3{font-size:17px;font-weight:600}
+code,.mono{font-family:var(--mono);font-size:.88em}
+.shell{display:grid;grid-template-columns:210px minmax(0,1fr);gap:32px;max-width:1180px;margin:0 auto;padding:28px 24px 64px}
+nav.rail{position:sticky;top:20px;align-self:start;display:flex;flex-direction:column;gap:2px;font-size:14px}
+nav.rail .brand{font-family:var(--display);font-weight:700;font-size:15px;color:var(--navy);margin-bottom:10px;letter-spacing:.02em;text-transform:uppercase}
+nav.rail a{color:var(--muted);text-decoration:none;padding:6px 10px;border-left:2px solid var(--line)}
+nav.rail a:hover{color:var(--ink);border-left-color:var(--navy)}
+main{display:flex;flex-direction:column;gap:40px;min-width:0}
+section{display:flex;flex-direction:column;gap:16px;scroll-margin-top:16px}
+.lede{color:var(--muted);max-width:68ch;margin:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px}
+.grid{display:grid;gap:12px}
+.g4{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:2px}
+.stat .k{font-size:12.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.stat .v{font-family:var(--display);font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}
+.stat .s{font-size:13px;color:var(--muted)}
+.hero{display:flex;flex-direction:column;gap:14px}
+.alert{border:1px solid var(--crimson);border-left-width:5px;background:var(--surface);border-radius:10px;padding:16px 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;align-items:start}
+.alert .big{font-family:var(--display);font-size:34px;font-weight:700;color:var(--crimson);font-variant-numeric:tabular-nums;line-height:1}
+.alert .lbl{font-size:13px;color:var(--muted)}
+.alert .head{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.info{background:var(--navy-soft);color:var(--navy)}
+.pill.neutral{background:var(--paper);color:var(--muted);border:1px solid var(--line)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;background:var(--paper)}
+tr:last-child td{border-bottom:0}
+tr.current td{background:var(--navy-soft)}
+ul.clean{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+.note{font-size:13.5px;color:var(--muted)}
+.warnbox{background:var(--warn-soft);color:var(--ink);border-radius:8px;padding:10px 12px;font-size:14px}
+.warnbox strong{color:var(--warn)}
+/* syllabus */
+.progress{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.bar{flex:1;min-width:180px;height:10px;background:var(--line);border-radius:999px;overflow:hidden}
+.bar>span{display:block;height:100%;background:var(--navy);width:0}
+.chapters{display:flex;flex-direction:column;gap:10px}
+details.ch{background:var(--surface);border:1px solid var(--line);border-radius:10px}
+details.ch>summary{list-style:none;cursor:pointer;padding:14px 16px;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center}
+details.ch>summary::-webkit-details-marker{display:none}
+.chnum{font-family:var(--display);font-weight:700;font-size:20px;color:var(--navy);width:30px;font-variant-numeric:tabular-nums}
+.chname{font-weight:600}
+.chname small{display:block;font-weight:400;color:var(--muted);font-family:var(--mono);font-size:12px}
+.chcount{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.subs{border-top:1px solid var(--line);padding:6px 16px 12px}
+.sub{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line)}
+.sub:last-of-type{border-bottom:0}
+.sub input{width:18px;height:18px;accent-color:var(--navy)}
+.sub label{cursor:pointer}
+.sub .code{color:var(--muted);font-family:var(--mono);font-size:12px;margin-right:6px}
+.sub.done label{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line)}
+.vid{font-size:13px;white-space:nowrap}
+.chlinks{display:flex;flex-wrap:wrap;gap:8px;padding-top:10px}
+.chlinks a{font-size:13px;border:1px solid var(--line);border-radius:6px;padding:4px 8px;text-decoration:none;background:var(--paper)}
+.chlinks a:hover{border-color:var(--navy)}
+/* directory */
+.controls{display:flex;flex-direction:column;gap:10px}
+.search{width:100%;padding:11px 14px;font:inherit;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:500 13.5px var(--body);padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:var(--surface)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.card .top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.card h3 a{text-decoration:none;color:var(--ink)}
+.card h3 a:hover{color:var(--navy);text-decoration:underline}
+.card p{margin:0;font-size:14px;color:var(--muted)}
+.card .meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+.card .host{font-family:var(--mono);font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+.card .caveat{font-size:13px;color:var(--warn);background:var(--warn-soft);border-radius:6px;padding:6px 8px}
+.empty{color:var(--muted);padding:20px;text-align:center;border:1px dashed var(--line);border-radius:10px}
+ol.tips{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px;max-width:75ch}
+ol.tips li::marker{font-family:var(--display);font-weight:700;color:var(--navy)}
+footer{font-size:13.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:18px}
+footer ul{columns:2;column-gap:28px;padding-left:18px;margin:8px 0 0}
+footer li{break-inside:avoid;margin-bottom:4px}
+@media (max-width:820px){
+  .shell{grid-template-columns:1fr;padding:18px 16px 48px;gap:18px}
+  nav.rail{position:static;flex-direction:row;flex-wrap:wrap;gap:4px}
+  nav.rail .brand{width:100%;margin-bottom:4px}
+  nav.rail a{border-left:0;border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:13px}
+  footer ul{columns:1}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <nav class="rail" aria-label="Sections">
+    <div class="brand">NEC · ACtE</div>
+    <a href="#deadlines">Deadlines</a>
+    <a href="#format">Exam format</a>
+    <a href="#syllabus">Syllabus tracker</a>
+    <a href="#resources">Resource directory</a>
+    <a href="#tips">Tips</a>
+    <a href="#history">Pass rates</a>
+    <a href="#sources">Sources</a>
+  </nav>
+
+  <main>
+    <header class="hero" id="deadlines">
+      <h1>NEC Computer Engineering Licence Hub</h1>
+      <p class="lede">Everything found so far for the Nepal Engineering Council registration exam, Computer Engineering (syllabus code <code>ACtE</code>): dates, format, a chapter-by-chapter tracker with video lectures, and every question bank, notes repo and app worth knowing about. Compiled 18 Nov 2026 (2083/08/03).</p>
+
+      <div class="alert" role="status">
+        <div class="head"><h2 style="font-size:20px">Next exam: 2nd cycle, 2083/84</h2><span id="cyclePill" class="pill ok">Applications open</span></div>
+        <div><div class="big" id="dApply">18</div><div class="lbl">days left to apply at normal fee<br><span class="mono">2083/08/21 · 6 Dec 2026</span></div></div>
+        <div><div class="big" id="dLate">25</div><div class="lbl">days left in the double-fee window<br><span class="mono">2083/08/28 · 13 Dec 2026</span></div></div>
+        <div><div class="big" id="dExam">47</div><div class="lbl">days to the exam start<br><span class="mono">2083/09/20 · 4 Jan 2027</span></div></div>
+        <div class="note" style="grid-column:1/-1">Apply only at <a href="https://register.nec.gov.np/">register.nec.gov.np</a>. Support: <span class="mono">9767472423</span> (Mon–Fri, 9 AM–5 PM) or <span class="mono">exam_support@nec.gov.np</span>. Confirm dates in the notice for your cycle on <a href="https://nec.gov.np/">nec.gov.np</a> before paying; the calendar is only a guide.</div>
+      </div>
+
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Cycle</th><th>Apply (normal fee)</th><th>Apply (double fee)</th><th>Exam starts</th></tr></thead>
+          <tbody>
+            <tr><td>1st</td><td>2083/04/28 – 05/17 <span class="note">(13 Aug – 2 Sep 2026)</span></td><td>05/18 – 05/24</td><td>2083/06/17 <span class="note">(3 Oct 2026)</span> · done</td></tr>
+            <tr class="current"><td><strong>2nd</strong></td><td><strong>2083/08/01 – 08/21</strong> <span class="note">(16 Nov – 6 Dec 2026)</span></td><td>08/22 – 08/28 <span class="note">(7 – 13 Dec)</span></td><td><strong>2083/09/20</strong> <span class="note">(4 Jan 2027)</span></td></tr>
+            <tr><td>3rd</td><td>2083/10/22 – 11/13 <span class="note">(5 – 25 Feb 2027)</span></td><td>11/14 – 11/20</td><td>2083/12/10 <span class="note">(24 Mar 2027)</span></td></tr>
+            <tr><td>4th</td><td>2084/01/20 – 02/09 <span class="note">(3 – 23 May 2027)</span></td><td>02/10 – 02/16</td><td>2084/03/04 <span class="note">(18 Jun 2027)</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </header>
+
+    <section id="format">
+      <h2>Exam format</h2>
+      <div class="grid g4">
+        <div class="stat"><span class="k">Questions</span><span class="v">100 MCQ</span><span class="s">1 mark each, computer-based</span></div>
+        <div class="stat"><span class="k">Time</span><span class="v">2 hours</span><span class="s">about 1.2 minutes per question</span></div>
+        <div class="stat"><span class="k">Pass mark</span><span class="v">50 / 100</span><span class="s">qualifying, not ranked</span></div>
+        <div class="stat"><span class="k">Negative marking</span><span class="v">None</span><span class="s">answer every question</span></div>
+        <div class="stat"><span class="k">Per chapter</span><span class="v">10 × 10</span><span class="s">at least 1 question per subchapter</span></div>
+        <div class="stat"><span class="k">Fees</span><span class="v">NPR 2,500</span><span class="s">double if late; NPR 5,000 registration after passing</span></div>
+      </div>
+      <div class="warnbox"><strong>Old format warning.</strong> Papers from 2080–2081, including the GitBook past-paper sets, use the older 60 × 1 + 20 × 2 scheme. The questions are still good practice, but the official 2082 model question is the only paper in the current 100 × 1 layout.</div>
+    </section>
+
+    <section id="syllabus">
+      <h2>Syllabus tracker</h2>
+      <p class="lede">The 10 ACtE chapters and their 60 subchapters. Tick a subchapter when you've studied it; ticks are kept in this browser only. Where a free YouTube playlist exists for a subchapter (from BCT Engineering Notes), it's linked.</p>
+      <div class="panel progress">
+        <strong id="progText">0 of 60 subchapters done</strong>
+        <div class="bar" aria-hidden="true"><span id="progBar"></span></div>
+        <button class="chip" id="resetBtn" type="button">Clear ticks</button>
+      </div>
+      <div class="chapters" id="chapters"></div>
+    </section>
+
+    <section id="resources">
+      <h2>Resource directory</h2>
+      <p class="lede">Every resource found, with what it's good for and any known problems. Filter by kind or search by name, topic or chapter.</p>
+      <div class="controls">
+        <label for="q" class="note">Search resources</label>
+        <input id="q" class="search" type="search" placeholder="Try: past questions, OS, free, app, video">
+        <div class="chips" id="typeChips" role="group" aria-label="Filter by kind"></div>
+        <div class="note" id="count"></div>
+      </div>
+      <div class="cards" id="cards"></div>
+    </section>
+
+    <section id="tips">
+      <h2>Tips collected from these sources</h2>
+      <ol class="tips">
+        <li><strong>Cover all 10 chapters.</strong> Each is worth 10 marks, so skipping one costs a lot. Chapter 10 (drawing, economics, CPM/PERT, professional practice, NEC Act) is mostly memorisation and an easy place to pick up marks.</li>
+        <li><strong>Practise the numericals:</strong> cache address fields and effective access time, Booth's multiplication, IEEE 754, K-maps, number conversions, 8085 addressing modes and interrupt vectors, page replacement, CPU scheduling, tree traversals and quicksort partitions, 2D/3D transformation matrices, NPV/IRR and CPM float.</li>
+        <li><strong>Chapters people flag as weak:</strong> Computer Organization &amp; Embedded Systems, DSA, and Software Engineering.</li>
+        <li><strong>Learn the laws Chapter 10 asks about:</strong> NEC Act 2055 (amended 2079), NEC Regulations 2057, Public Procurement Act 2063, Electronic Transactions Act 2063.</li>
+        <li><strong>Do the last two or three exams' questions</strong> to learn the style: your project's questions-from-memory docs first, then the GitBook and necmcq sets.</li>
+        <li><strong>Take timed 100-question mocks on a computer.</strong> The exam is computer-based, and pacing matters more than people expect.</li>
+        <li><strong>Never leave a blank.</strong> There's no negative marking.</li>
+        <li><strong>Check answers in community banks.</strong> They contain mistakes: NECPrep's own validator reports defects, some GitBook links are broken, and the BCT past-questions PDF has a wrong effective-access-time solution.</li>
+      </ol>
+    </section>
+
+    <section id="history">
+      <h2>Pass rates so far</h2>
+      <div class="grid g3">
+        <div class="stat"><span class="k">1st licence exam · Chaitra 2079</span><span class="v">28.5%</span><span class="s">565 of 1,981 passed</span></div>
+        <div class="stat"><span class="k">2nd licence exam · Ashadh 2080</span><span class="v">32.5%</span><span class="s">801 of 2,468 passed</span></div>
+        <div class="stat"><span class="k">Computer-specific rates</span><span class="v">Not published</span><span class="s">only overall figures were found</span></div>
+      </div>
+    </section>
+
+    <footer id="sources">
+      <strong>Not covered:</strong> Reddit couldn't be reached from the session that compiled this page, so no Reddit threads are included. Facebook and Telegram study groups exist but couldn't be checked.
+      <ul>
+        <li><a href="https://www.educatenepal.com/news/detail/nepal-engineering-council-licensing-exam-routine">educatenepal: NEC calendar 2083/84</a></li>
+        <li><a href="https://engineerfromnepal.com/blog/nec-license-exam-date/">engineerfromnepal: exam dates</a></li>
+        <li><a href="https://open-exam-prep.com/practice/np-nec-computer">OpenExamPrep: format, fees, study tips</a></li>
+        <li><a href="https://necprep.com/blog/how-to-crack-the-nepal-engineering-council-nec-license-exam-on-your-first-attempt-the-ultimate-ai-preparation-guide">NEC Prep: exam pattern guide</a></li>
+        <li><a href="https://register.nec.gov.np/">NEC registration portal</a></li>
+        <li><a href="https://myrepublica.nagariknetwork.com/news/only-28-5-percent-of-examinees-pass-engineer-s-license-exam">Republica: 1st exam result</a></li>
+        <li><a href="https://www.collegenp.com/result/nepal-engineering-council-publishes-general-engineers-exam-results">Collegenp: 2nd exam result</a></li>
+        <li><a href="https://nec-license.gitbook.io/books/summary">NEC License Books (GitBook)</a></li>
+        <li><a href="https://bctengineeringnotes.blogspot.com/2023/04/nepal-engineering-council.html">BCT Engineering Notes: playlists</a></li>
+        <li><a href="https://github.com/SamirWagle/NECPrep">NECPrep repository</a></li>
+      </ul>
+    </footer>
+  </main>
+</div>
+
+<script>
+const YT = "https://www.youtube.com/playlist?list=";
+const CHAPTERS = [
+  {n:1, name:"Concept of Basic Electrical and Electronics Engineering", code:"AExE01", subs:[
+    ["1.1","Basic concepts (Ohm's law, power, series/parallel, Kirchhoff)",""],
+    ["1.2","Network theorems","PLAXUYU7PbJhgLUsjjaiA1u0MmJF-eHN4w"],
+    ["1.3","Alternating current fundamentals","PLAXUYU7PbJhgaa7ER2ULzFKio10d19r8d"],
+    ["1.4","Semiconductor devices","PLAXUYU7PbJhi7bPRJk4nl7q77yz7vwdJ3"],
+    ["1.5","Signal generators","PLAXUYU7PbJhg4aJbdKW_mQlhuSF_3-9oC"],
+    ["1.6","Amplifiers","PLAXUYU7PbJhhaf3NZQ_XomkqMAMvaR-_G"]]},
+  {n:2, name:"Digital Logic and Microprocessor", code:"AExE02", subs:[
+    ["2.1","Digital logic","PLAXUYU7PbJhhncW1TYg_IVXt8Yhqm1uyP"],
+    ["2.2","Combinational & arithmetic circuits","PLAXUYU7PbJhhqWesUD1dBw5c7-iqm7lfT"],
+    ["2.3","Sequential logic circuits","PLAXUYU7PbJhjeQI3nHewsuxJC8qxbCarn"],
+    ["2.4","Microprocessor",""],
+    ["2.5","Microprocessor system",""],
+    ["2.6","Interrupt operations","PLAXUYU7PbJhjiONBpKGkAx3zi1hjrabet"]]},
+  {n:3, name:"Programming Language and Its Applications", code:"ACtE03", subs:[
+    ["3.1","Introduction to C programming","PLAXUYU7PbJhghFr2oEdTbL8z23Wdqfis1"],
+    ["3.2","Pointers, structures and data files","PLAXUYU7PbJhherVuN3EQQrDrvpfYMvI0a"],
+    ["3.3","C++ language constructs with objects and classes","PLAXUYU7PbJhgXU-_NvAw_jRmkfiXiGrme"],
+    ["3.4","Features of object-oriented programming","PLAXUYU7PbJhje3GBvuenk8CHz8C0qakBM"],
+    ["3.5","Pure virtual functions and file handling","PLAXUYU7PbJhgwGQ7x3q3YThpENbuYUg5y"],
+    ["3.6","Generic programming and exception handling","PLAXUYU7PbJhgvdNs48I-qDnzts3x7Cyq9"]]},
+  {n:4, name:"Computer Organization and Embedded System", code:"ACtE04", subs:[
+    ["4.1","Control and CPU","PLAXUYU7PbJhij_mzxJ6bcFmJTAkvSkSoC"],
+    ["4.2","Computer arithmetic and memory system","PLAXUYU7PbJhjVfMb1oKy9z1MjC173F2LH"],
+    ["4.3","I/O organization and multiprocessor","PLAXUYU7PbJhjHkOlWt352SE43fv-0qo1X"],
+    ["4.4","Embedded system design","PLAXUYU7PbJhiiV-7Q7CCuk4EUsJWL1QpF"],
+    ["4.5","Real-time operating and control systems","PLAXUYU7PbJhgfZvhOkGmlenrWPm08IieG"],
+    ["4.6","Hardware description language (VHDL) and IC technology",""]]},
+  {n:5, name:"Concept of Computer Network and Network Security System", code:"ACtE05", subs:[
+    ["5.1","Introduction to computer networks and physical layer","PLAXUYU7PbJhhpQ5PAocNwVagYhS2KL-PG"],
+    ["5.2","Data link layer","PLAXUYU7PbJhjs1bzEzn1_9Qd7-Bfif7aH"],
+    ["5.3","Network layer","PLAXUYU7PbJhjAxExi0t79yf6IjxEZk9lJ"],
+    ["5.4","Transport layer","PLAXUYU7PbJhjZ9KCQDkbIGiBBpptoYLCL"],
+    ["5.5","Application layer","PLAXUYU7PbJhhUdeBrkq6OMYaCobitOlVZ"],
+    ["5.6","Network security","PLAXUYU7PbJhjZwyfVapm8uE_zUMbpVs18"]]},
+  {n:6, name:"Theory of Computation and Computer Graphics", code:"ACtE06", subs:[
+    ["6.1","Introduction to finite automata","PLAXUYU7PbJhhGBdj11Vb5piNNEMX0bnn0"],
+    ["6.2","Context-free languages",""],
+    ["6.3","Turing machines",""],
+    ["6.4","Introduction to computer graphics","PLAXUYU7PbJhiAdlwqyV12-5hbVq8WDnYk"],
+    ["6.5","Two-dimensional transformation","PLAXUYU7PbJhi-LXQUyUPuP36UGNcy2U0D"],
+    ["6.6","Three-dimensional transformation",""]]},
+  {n:7, name:"Data Structures and Algorithm, Database System and Operating System", code:"ACtE07", subs:[
+    ["7.1","Data structures, lists, linked lists and trees","PLAXUYU7PbJhjEGCBq6nnVUoGFsWk6qY0Y"],
+    ["7.2","Sorting, searching, hashing and graphs",""],
+    ["7.3","Data models, normalization and SQL",""],
+    ["7.4","Transaction processing, concurrency control and crash recovery","PLAXUYU7PbJhgs-nhw4wlFAdynG_qAZMMK"],
+    ["7.5","Operating system and process management","PLAXUYU7PbJhjRMni-AlHZohLrDwq_IP1s"],
+    ["7.6","Memory management, file systems and system administration",""]]},
+  {n:8, name:"Software Engineering and Object-Oriented Analysis & Design", code:"ACtE08", subs:[
+    ["8.1","Software process and requirements","PLAXUYU7PbJhiuxgGCR1_ihJU-Ph6MVY1a"],
+    ["8.2","Software design",""],
+    ["8.3","Testing, cost estimation, quality and configuration management","PLAXUYU7PbJhjfnqRdDCPIhc1xidctKFq5"],
+    ["8.4","Object-oriented fundamentals and analysis","PLAXUYU7PbJhgVlj1z_K2s00u_yXdo1byq"],
+    ["8.5","Object-oriented design","PLAXUYU7PbJhh3SM73HWpBHXU1Qf2hoZXb"],
+    ["8.6","Object-oriented design implementation",""]]},
+  {n:9, name:"Artificial Intelligence and Neural Networks", code:"ACtE09", subs:[
+    ["9.1","Introduction to AI and intelligent agents","PLAXUYU7PbJhi-YVkthBg_e5cmoP6-Kukw"],
+    ["9.2","Problem solving and searching techniques","PLAXUYU7PbJhhg1jaU2gasFmh4FlMXvq-P"],
+    ["9.3","Knowledge representation","PLAXUYU7PbJhi18Iyxr0xaHI8JJXlHnuTq"],
+    ["9.4","Expert systems and natural language processing","PLAXUYU7PbJhjyT9UWCdW0qprJrwdvoQZV"],
+    ["9.5","Machine learning","PLAXUYU7PbJhjMWH1O92J_MXLeqar3zYU0"],
+    ["9.6","Neural networks","PLAXUYU7PbJhhn-Dl0GBoVLXyFFxbv2Avs"]]},
+  {n:10, name:"Project Planning, Design and Implementation", code:"", subs:[
+    ["10.1","Engineering drawings and their concepts",""],
+    ["10.2","Engineering economics",""],
+    ["10.3","Project planning and scheduling (CPM/PERT)","PLAXUYU7PbJhjkNsEkO1zVGge8YT6DzfyU"],
+    ["10.4","Project management","PLAXUYU7PbJhjDuHReUetluhPJSU_dL8b6"],
+    ["10.5","Engineering professional practice",""],
+    ["10.6","Engineering regulatory body (NEC Act, Regulations)",""]]}
+];
+const GB = "https://nec-license.gitbook.io/books/";
+const CH_SLUG = ["1.-concept-of-basic-electrical-and-electronics-engineering","2.-digital-logic-and-microprocessor","3.-programming-language-and-its-applications","4.-computer-organization-and-embedded-system","5.-concept-of-computer-network-and-network-security-system","6.-theory-of-computation-and-computer-graphics","7.-data-structures-and-algorithm-database-system-and-operating-system","8.-software-engineering-and-object-oriented-analysis-and-design","9.-artificial-intelligence-and-neural-networks","10.-project-planning-design-and-implementation"];
+
+const R = [
+  {t:"Official", name:"Official model question: Computer Engineering", url:"https://nec.gov.np/uploads/Model%20Question%20Registration/1763714765897_Model%20question%20of%20Computer%20Engineering.pdf", cost:"Free", d:"NEC's own model paper in the current 100 × 1 format. Do it first, timed, to see the real style.", k:"model question pdf official 2082"},
+  {t:"Official", name:"NEC registration portal", url:"https://register.nec.gov.np/", cost:"Free", d:"The only place to apply. Includes a how-to-fill-the-application guide and support contacts.", k:"apply application register admit card"},
+  {t:"Official", name:"Nepal Engineering Council website", url:"https://nec.gov.np/", cost:"Free", d:"Notices for each cycle: application windows, admit cards, results, syllabus PDFs.", k:"notices results calendar syllabus"},
+  {t:"Official", name:"NEC Act 2055 (amended 2079)", url:"https://nec.gov.np/uploads/brochure/uHz5GkVeJ4220316085434.pdf", cost:"Free", d:"Chapter 10.6 asks about it. Pair with NEC Regulations 2057, Public Procurement Act 2063 and Electronic Transactions Act 2063.", k:"law act regulation chapter 10 regulatory body"},
+  {t:"Official", name:"ACtE syllabus (Slideshare copy)", url:"https://www.slideshare.net/slideshow/ioe-bachelor-in-computer-engineering-license-syllabus-pdf/273678976", cost:"Free", d:"Copy of the official Computer Engineering syllabus. Your project already holds the PDF.", k:"syllabus chapters subchapters"},
+
+  {t:"Question bank", name:"NEC License Books (GitBook)", url:"https://nec-license.gitbook.io/books/summary", cost:"Free", d:"The biggest free chapter-wise MCQ collection, with explanations: Digital Logic 12 sets, Microprocessor 9, COA 11, OS 12, SE 9, AI 9, Graphics 6, DSA 6, Networks 8, C/C++ 5. Also notes for every subchapter, past sets (Chaitra 2080, Asoj 2080, Ashad 2081), NEC model sets and a Tips & Tricks page.", warn:"Past sets use the old 60 + 20 format. Some Chapter 1 Basic Electrical links are broken.", k:"mcq past questions model sets notes all chapters gitbook"},
+  {t:"Question bank", name:"Kati Sajilo / necmcq", url:"https://necmcq.vercel.app/personal", cost:"Free", d:"Questions recalled from the January 2026 exam (saved in your project), plus past, model and chapter practice sets.", k:"past questions memory 2082 2026 recent"},
+  {t:"Question bank", name:"necmcq source repo", url:"https://github.com/bibhushansaakha/MCQ", cost:"Free", d:"GitHub source behind necmcq, with past questions, official model questions and chapter practice sets.", k:"github past questions model"},
+  {t:"Question bank", name:"NECPrep (open source)", url:"https://lisensepreparation.samirwagle.com.np/", cost:"Free", d:"About 2,300 Computer Engineering MCQs over all 10 chapters, with timed mocks, flashcards and progress tracking. No account; built for slow mobile data.", warn:"Its own validator found answer defects. Chapters 5, 6, 7 and 9 have only about 65–70 questions each.", k:"mock test flashcards mcq app open source"},
+  {t:"Question bank", name:"Quick NEC: Computer Engineering", url:"https://www.quicknec.com/exam/computer-engineering", cost:"Free", d:"No sign-up: model papers, past NEC questions, chapter MCQs with explanations and 100-question timed mocks.", k:"mock test past questions model free"},
+  {t:"Question bank", name:"OpenExamPrep: NEC Computer", url:"https://open-exam-prep.com/practice/np-nec-computer", cost:"Free", d:"100+ practice questions with explanations, plus a clear summary of format, fees and study tips.", k:"practice questions format fees"},
+  {t:"Question bank", name:"NECX", url:"https://necx.girirakesh.com.np/", cost:"Free to start", d:"Web portal and Android/iOS app claiming 5,000+ chapter-wise MCQs, timed mocks, past papers and a leaderboard.", k:"app mock test past papers leaderboard"},
+  {t:"Question bank", name:"NEC License Exam Portal", url:"https://neclicenseexam.vercel.app/faculty/computer-engineering", cost:"Free", d:"Computer-based-test simulator with a 100-question, 120-minute mock.", k:"cbt mock simulator"},
+  {t:"Question bank", name:"Srijannsm offline MCQ app", url:"https://github.com/Srijannsm/nec-license-preparation-bct", cost:"Free", d:"Plain HTML study-and-test app that works offline from index.html; you can add your own questions.", k:"offline app github mcq"},
+  {t:"Question bank", name:"Licenseexam blog: Chapter 1 mock", url:"https://licenseexam.blogspot.com/2024/09/beeemocktest.html", cost:"Free", d:"MCQ mock for Basic Electrical and Electronics.", k:"chapter 1 electrical electronics mock"},
+  {t:"Question bank", name:"NEC Exam Helper", url:"https://necexamhelper.com/", cost:"Unknown", d:"Lists Computer Engineering past-year question sets 1–3, repeated MCQs and model sets.", warn:"Down for maintenance when checked on 18 Nov 2026.", k:"past year questions repeated"},
+
+  {t:"Notes", name:"aakritsubedi/computer-nec-license", url:"https://github.com/aakritsubedi/computer-nec-license", cost:"Free", d:"Markdown notes for all 60 subchapters, plus short-question sets 1–5.", k:"notes all subchapters github"},
+  {t:"Notes", name:"imSarthakGautam/NEC-License-Computer", url:"https://github.com/imSarthakGautam/NEC-License-Computer", cost:"Free", d:"Condensed notes: Basic Electrical, Digital Logic & Microprocessor, COA & Embedded, Networks & Security, DSA/DBMS/OS.", k:"notes condensed revision"},
+  {t:"Notes", name:"srijankarki07 preparation guide", url:"https://github.com/srijankarki07/Nepal-Engineering-License-Exam-Preparation-Guide", cost:"Free", d:"Clear Chapter 1 notes (1.1–1.6) with diagrams.", warn:"Only Chapter 1 so far.", k:"notes electrical diagrams chapter 1"},
+  {t:"Notes", name:"SabinNepali topic link list", url:"https://github.com/SabinNepali/NEC-License-Computer-Engineering", cost:"Free", d:"A .docx mapping each Chapter 1–2 topic to a web explainer (AllAboutCircuits, GeeksforGeeks and similar).", k:"links electrical digital logic"},
+  {t:"Notes", name:"IOE Professional Practice notes", url:"https://ioesolutions.esign.com.np/notes/text-notes-show/Regulatory-Environment", cost:"Free", d:"Regulatory environment, NEC Act and NEA, for Chapter 10.5–10.6.", k:"professional practice chapter 10 nec act nea"},
+
+  {t:"Video", name:"BCT Engineering Notes: playlist per subchapter", url:"https://bctengineeringnotes.blogspot.com/2023/04/nepal-engineering-council.html", cost:"Free", d:"YouTube playlists for about 40 of the 60 subchapters, all linked in the syllabus tracker above.", k:"youtube video lectures playlists"},
+  {t:"Video", name:"Licence exam playlist", url:"https://www.youtube.com/watch?v=0qIujiMtzDU&list=PLfel_XmkwhfLoKa7VQBT7Fk_lLDNzXfnS", cost:"Free", d:"A licence-exam YouTube playlist shared in the BCT Engineering Notes comments.", k:"youtube video"},
+
+  {t:"App", name:"NEC License Exam Preparation (Android)", url:"https://play.google.com/store/apps/details?id=com.aaratiniraj.nec", cost:"Free, ads", d:"About 3.5K installs, 5★ from 85 ratings. Past questions, the official model question, notes and mock exams.", k:"android app past questions model"},
+  {t:"App", name:"Yashi Academy", url:"https://yashiacademy.com/blog/nec-license-exam-questions-branch-wise-practice-nepal/", cost:"Free to start", d:"iOS/Android app with branch-wise mock tests; the link opens an 8-question sample with answers.", k:"app ios android mock"},
+  {t:"App", name:"Engineering Mock Test (iOS)", url:"https://apps.apple.com/app/engineering-mock-test/id6757604629", cost:"Free", d:"Chapter-wise questions with step-by-step solutions, Computer included.", k:"ios app chapter"},
+  {t:"App", name:"Exametix", url:"https://apps.apple.com/app/id6762305333", cost:"Free to start", d:"Topic-wise MCQs, daily practice and weak-area analytics for NEC and PSC exams.", k:"app analytics"},
+  {t:"App", name:"Engineering License Prep: NEC (Android)", url:"https://play.google.com/store/apps/details?id=com.anupapp.necprep1", cost:"Free", d:"Mock tests for all faculties. Small and new.", k:"android app mock"},
+
+  {t:"Paid", name:"NEC Prep", url:"https://necprep.com/", cost:"About Rs 500", d:"Unlimited MCQs, readiness score, weak-chapter analytics, AI explanations and a study planner.", k:"paid ai analytics planner"},
+  {t:"Paid", name:"Pana Academy: Computer licence course", url:"https://panaacademy.com/courses/nec-computer-engineering-license", cost:"Paid", d:"Live and recorded classes (online or in Kathmandu), notes, past papers, full mocks; 3+ months; you can rejoin batches until you pass.", k:"coaching class kathmandu"},
+
+  {t:"Guide", name:"10-week Computer Engineering study plan", url:"https://licenseexam.blogspot.com/2024/08/computerengineer.html", cost:"Free", d:"Week-by-week plan through all 10 chapters with study tips.", k:"study plan schedule weeks"},
+  {t:"Guide", name:"NEC Prep: exam pattern guide", url:"https://necprep.com/blog/how-to-crack-the-nepal-engineering-council-nec-license-exam-on-your-first-attempt-the-ultimate-ai-preparation-guide", cost:"Free", d:"Pattern, no-negative-marking rule and pacing advice.", k:"strategy pattern format"},
+  {t:"Guide", name:"engineerfromnepal: dates and registration", url:"https://engineerfromnepal.com/blog/nec-license-exam-date/", cost:"Free", d:"The 2083/84 calendar with AD dates, plus step-by-step registration and result guides.", k:"dates calendar registration result"},
+  {t:"Guide", name:"Edusanjal: registration exam overview", url:"https://edusanjal.com/exam/nepal-engineering-council-registration-examination/", cost:"Free", d:"Exam overview and syllabus downloads.", k:"overview syllabus"},
+  {t:"Guide", name:"Collegenp: 15th registration exam 2083", url:"https://www.collegenp.com/exam/nec-15th-engineer-registration-exam-2083", cost:"Free", d:"Notice summary for the 15th exam.", k:"notice 2083"},
+
+  {t:"In your project", name:"Questions from memory, parts 1–3", url:"", cost:"Yours", d:"Recalled questions from recent sittings, in your Claude project.", k:"memory past questions recent"},
+  {t:"In your project", name:"NEC PAST QUESTIONS.pdf", url:"", cost:"Yours", d:"BCT past-question collection (tapendrapandey.com.np).", warn:"One effective-access-time solution uses a formula that doesn't match its own calculation.", k:"past questions pdf"},
+  {t:"In your project", name:"sample-question.pdf and syllabus PDF", url:"", cost:"Yours", d:"Sample paper and the official ACtE syllabus.", k:"sample syllabus"},
+  {t:"In your project", name:"NEC personal exam questions (Jan 2026)", url:"", cost:"Yours", d:"55 questions from the necmcq personal set.", k:"2026 personal questions"}
+];
+
+/* ---------- countdown ---------- */
+(function(){
+  const now = Date.now();
+  const at = s => new Date(s).getTime();
+  const days = t => Math.max(0, Math.ceil((t - now) / 86400000));
+  const open = at("2026-11-16T00:00:00+05:45"), applyEnd = at("2026-12-06T23:59:00+05:45"), lateEnd = at("2026-12-13T23:59:00+05:45"), exam = at("2027-01-04T09:00:00+05:45");
+  document.getElementById("dApply").textContent = days(applyEnd);
+  document.getElementById("dLate").textContent = days(lateEnd);
+  document.getElementById("dExam").textContent = days(exam);
+  const pill = document.getElementById("cyclePill");
+  if (now < open) { pill.className = "pill info"; pill.textContent = "Opens 16 Nov 2026"; }
+  else if (now <= applyEnd) { pill.className = "pill ok"; pill.textContent = "Applications open"; }
+  else if (now <= lateEnd) { pill.className = "pill warn"; pill.textContent = "Double-fee window only"; }
+  else if (now < exam) { pill.className = "pill bad"; pill.textContent = "Applications closed"; }
+  else { pill.className = "pill neutral"; pill.textContent = "Exam under way or done; see 3rd cycle"; }
+})();
+
+/* ---------- syllabus tracker ---------- */
+const KEY = "nec-acte-progress-v1";
+let done = {};
+try { done = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { done = {}; }
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(done)); } catch (e) {} }
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function renderChapters(){
+  const wrap = document.getElementById("chapters");
+  wrap.innerHTML = CHAPTERS.map((c, i) => {
+    const subs = c.subs.map(([code, title, pl]) => {
+      const id = "s" + code.replace(".", "_");
+      const vid = pl ? `<a class="vid" href="${YT + pl}">▶ Videos</a>` : `<span class="vid note">no playlist</span>`;
+      return `<div class="sub${done[code] ? " done" : ""}" data-code="${code}">
+        <input type="checkbox" id="${id}" ${done[code] ? "checked" : ""}>
+        <label for="${id}"><span class="code">${code}</span>${esc(title)}</label>${vid}</div>`;
+    }).join("");
+    return `<details class="ch"${i === 0 ? " open" : ""}>
+      <summary><span class="chnum">${c.n}</span><span class="chname">${esc(c.name)}<small>${c.code ? c.code + " · " : ""}10 marks</small></span><span class="chcount" data-ch="${c.n}"></span></summary>
+      <div class="subs">${subs}
+        <div class="chlinks"><a href="${GB + CH_SLUG[i]}">GitBook notes</a><a href="${GB + CH_SLUG[i]}/mcqs">GitBook MCQs</a></div>
+      </div></details>`;
+  }).join("");
+  wrap.addEventListener("change", e => {
+    if (e.target.type !== "checkbox") return;
+    const row = e.target.closest(".sub"); const code = row.dataset.code;
+    if (e.target.checked) done[code] = 1; else delete done[code];
+    row.classList.toggle("done", e.target.checked);
+    save(); updateProgress();
+  });
+  updateProgress();
+}
+function updateProgress(){
+  const total = CHAPTERS.reduce((a, c) => a + c.subs.length, 0);
+  const n = Object.keys(done).length;
+  document.getElementById("progText").textContent = `${n} of ${total} subchapters done`;
+  document.getElementById("progBar").style.width = (n / total * 100) + "%";
+  CHAPTERS.forEach(c => {
+    const k = c.subs.filter(s => done[s[0]]).length;
+    document.querySelector(`.chcount[data-ch="${c.n}"]`).textContent = `${k}/6`;
+  });
+}
+document.getElementById("resetBtn").addEventListener("click", () => {
+  done = {}; save(); renderChapters();
+});
+renderChapters();
+
+/* ---------- directory ---------- */
+const TYPES = ["All", "Official", "Question bank", "Notes", "Video", "App", "Paid", "Guide", "In your project"];
+let activeType = "All";
+const chipWrap = document.getElementById("typeChips");
+chipWrap.innerHTML = TYPES.map(t => {
+  const n = t === "All" ? R.length : R.filter(r => r.t === t).length;
+  return `<button type="button" class="chip" aria-pressed="${t === "All"}" data-t="${t}">${t} <span class="mono">${n}</span></button>`;
+}).join("");
+chipWrap.addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  activeType = b.dataset.t;
+  chipWrap.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b));
+  renderCards();
+});
+document.getElementById("q").addEventListener("input", renderCards);
+const costPill = c => /^Free$/.test(c) ? "ok" : /Free/.test(c) ? "info" : /Yours/.test(c) ? "neutral" : /Unknown/.test(c) ? "neutral" : "warn";
+function host(u){ try { return new URL(u).hostname.replace(/^www\./, ""); } catch (e) { return ""; } }
+function renderCards(){
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  const list = R.filter(r => (activeType === "All" || r.t === activeType) &&
+    (!q || (r.name + " " + r.d + " " + (r.warn || "") + " " + r.k + " " + r.t + " " + r.cost).toLowerCase().includes(q)));
+  document.getElementById("count").textContent = `Showing ${list.length} of ${R.length} resources`;
+  const cards = document.getElementById("cards");
+  if (!list.length) { cards.innerHTML = `<div class="empty">No resources match "${esc(q)}". Clear the search or pick another kind.</div>`; return; }
+  cards.innerHTML = list.map(r => `<article class="card">
+      <div class="top"><h3>${r.url ? `<a href="${r.url}">${esc(r.name)}</a>` : esc(r.name)}</h3><span class="pill ${costPill(r.cost)}">${esc(r.cost)}</span></div>
+      <p>${esc(r.d)}</p>
+      ${r.warn ? `<div class="caveat">${esc(r.warn)}</div>` : ""}
+      <div class="meta"><span class="pill neutral">${esc(r.t)}</span>${r.url ? `<span class="host">${esc(host(r.url))}</span>` : ""}</div>
+    </article>`).join("");
+}
+renderCards();
+</script>
+</body>
+</html>
