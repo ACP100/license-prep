@@ -12,9 +12,17 @@ const QuestionDetailView = lazy(() =>
   import("../components/QuestionDetailView").then((m) => ({ default: m.QuestionDetailView })),
 );
 
+const ResourcesPage = lazy(() =>
+  import("../components/ResourcesPage").then((m) => ({ default: m.ResourcesPage })),
+);
+
 function Home() {
   const [isProgressOpen, setIsProgressOpen] = useQueryState(
     "progress",
+    parseAsBoolean.withDefault(false),
+  );
+  const [showResources, setShowResources] = useQueryState(
+    "resources",
     parseAsBoolean.withDefault(false),
   );
   const filters = useQuestionFilters();
@@ -29,6 +37,14 @@ function Home() {
   const handleCloseDetail = () => {
     void filters.setSelectedQuestionId(null, { shallow: true });
   };
+
+  if (showResources) {
+    return (
+      <Suspense fallback={null}>
+        <ResourcesPage onClose={() => void setShowResources(null)} />
+      </Suspense>
+    );
+  }
 
   return (
     <div className="h-screen flex flex-col overflow-hidden bg-[var(--bg)]">
@@ -104,7 +120,26 @@ function Home() {
         </div>
       </div>
 
-      <div className="fixed bottom-6 right-6 z-20">
+      <div className="fixed bottom-6 right-6 z-20 flex items-center gap-2">
+        <button
+          onClick={() => void setShowResources(true)}
+          className="flex items-center gap-2 bg-[var(--bg2)] text-[var(--text)] border border-[var(--border)] px-4 py-2.5 rounded-full shadow-lg hover:scale-105 transition-all active:scale-95 font-bold text-sm"
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+          </svg>
+          Resources
+        </button>
         <button
           onClick={() => setIsProgressOpen(true)}
           className="flex items-center gap-2 bg-[var(--text)] text-[var(--bg)] px-4 py-2.5 rounded-full shadow-lg hover:scale-105 transition-all active:scale-95 font-bold text-sm"
