@@ -1,0 +1,128 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+:root {
+  --bg: #f5f4ed; /* parchment */
+  --bg2: #faf9f5; /* ivory */
+  --bg3: #e8e6dc; /* warm-sand */
+  --border: #e8e6dc;
+  --border2: #e5e3d8;
+
+  --accent: #1b365d;
+  --text: #141413;
+  --text2: #3d3d3a;
+  --text3: #6b6a64;
+
+  --good: #2e7a4c;
+  --good-soft: #e2f1e7;
+  --bad: #b3261e;
+  --bad-soft: #f8e3e1;
+
+  --serif:
+    Charter, Georgia, "TsangerJinKai02", "Source Han Serif SC", "Noto Serif CJK SC", "Songti SC",
+    Palatino, serif;
+  --sans: var(--serif);
+  --mono: "JetBrains Mono", "Fira Code", "SF Mono", Consolas, Monaco, monospace;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--serif);
+  font-size: 14.5px;
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border2);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text3);
+}
+
+.q-text .katex {
+  font-size: 1.02em;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 20px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: var(--text3);
+}
+
+@keyframes guard-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes progress-dialog-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.rich-text p {
+  margin: 0 0 0.6em;
+}
+.rich-text p:last-child {
+  margin-bottom: 0;
+}
+.rich-text ul {
+  list-style: disc;
+  margin: 0.4em 0 0.6em 1.3em;
+}
+.rich-text code {
+  background: var(--bg3);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+  font-family: var(--mono);
+  font-size: 0.92em;
+}
+.rich-text figure {
+  margin: 0.8em 0;
+}
+.rich-text img {
+  max-width: 100%;
+  border-radius: 8px;
+}
