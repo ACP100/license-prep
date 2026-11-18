@@ -240,3 +240,28 @@ export function formulaLegendFor(tex: string): string | null {
   });
   return entry?.legend ?? null;
 }
+
+const DISPLAY_MATH_RE = /\$\$(.+?)\$\$/gs;
+
+/**
+ * Scans a block of question/explanation text for display ($$...$$) formulas
+ * and returns the ids of every glossary entry that matches one of them.
+ * Used to "unlock" formulas on the Formulas page as the learner encounters
+ * them while studying or sitting the mock exam.
+ */
+export function matchFormulaIds(text: string | null | undefined): string[] {
+  if (!text) return [];
+  const ids = new Set<string>();
+  const matches = text.matchAll(DISPLAY_MATH_RE);
+  for (const match of matches) {
+    const tex = match[1];
+    for (const entry of FORMULA_GLOSSARY) {
+      try {
+        if (entry.test(tex)) ids.add(entry.id);
+      } catch {
+        // ignore malformed entries
+      }
+    }
+  }
+  return Array.from(ids);
+}

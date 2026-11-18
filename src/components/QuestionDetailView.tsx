@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { Latex, RichText } from "./RichText";
 import type { Question } from "../data/questions";
 import { useQuestionData } from "../hooks/useQuestionData";
+import { useFormulaUnlocks } from "../hooks/useFormulaUnlocks";
+import { matchFormulaIds } from "../data/formulaGlossary";
 import {
   MDXEditor,
   headingsPlugin,
@@ -35,6 +37,11 @@ export function QuestionDetailView({ question, onClose }: QuestionDetailViewProp
 
   const hasAnswered = selected !== null;
   const isCorrect = selected === question.answer;
+
+  const { unlock } = useFormulaUnlocks();
+  useEffect(() => {
+    if (hasAnswered) unlock(matchFormulaIds(question.explanation));
+  }, [hasAnswered, question.explanation, unlock]);
 
   return (
     <div className="flex flex-col h-full bg-[var(--bg)] border-l border-[var(--border)] shadow-2xl">

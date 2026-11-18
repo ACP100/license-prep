@@ -82,6 +82,24 @@ export function Flag({ size = 24, ...props }: IconProps) {
   );
 }
 
+export function Lock({ size = 24, ...props }: IconProps) {
+  return (
+    <svg {...base(size, props)}>
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  );
+}
+
+export function Sparkles({ size = 24, ...props }: IconProps) {
+  return (
+    <svg {...base(size, props)} fill="currentColor" stroke="none">
+      <path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8L12 2z" />
+      <path d="M19 15l.9 2.6L22.5 18.5l-2.6.9L19 22l-.9-2.6-2.6-.9 2.6-.9L19 15z" />
+    </svg>
+  );
+}
+
 export function FlagFilled({ size = 24, ...props }: IconProps) {
   return (
     <svg {...base(size, props)} fill="currentColor" stroke="none">

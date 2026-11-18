@@ -1,9 +1,11 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Q from "../data/questions";
 import TOPICS from "../data/topics";
 import { CheckCircle2, Clock, Flag, FlagFilled, X, XCircle } from "./Icons";
 import { Latex, RichText } from "./RichText";
 import { useMockExam } from "../hooks/useMockExam";
+import { useFormulaUnlocks } from "../hooks/useFormulaUnlocks";
+import { matchFormulaIds } from "../data/formulaGlossary";
 import { EXAM_PASS_MARK, QUESTIONS_PER_CHAPTER, scoreSession } from "../lib/mockExam";
 
 interface MockExamPageProps {
@@ -41,6 +43,17 @@ export function MockExamPage({ onClose }: MockExamPageProps) {
 
   const result = session?.submitted ? scoreSession(session) : null;
   const attempt = session ? exam.history.find((a) => a.id === session.id) : undefined;
+
+  // Once the exam is submitted, every question's explanation becomes visible
+  // in review (at least for the ones listed below) -- unlock any formula
+  // used across the whole paper, same as reading an explanation normally.
+  const { unlock } = useFormulaUnlocks();
+  useEffect(() => {
+    if (!session?.submitted) return;
+    const ids = questions.flatMap((q) => matchFormulaIds(q.explanation));
+    unlock(ids);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.submitted, session?.id]);
 
   // ---------- Intro screen ----------
   if (!session) {
