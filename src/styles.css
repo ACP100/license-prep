@@ -126,3 +126,15 @@ body {
   max-width: 100%;
   border-radius: 8px;
 }
+.formula-with-legend {
+  display: inline-block;
+}
+.formula-legend {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.74em;
+  font-style: italic;
+  color: var(--text3);
+  margin-top: 0.3em;
+  line-height: 1.5;
+}

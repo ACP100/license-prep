@@ -16,6 +16,10 @@ const ResourcesPage = lazy(() =>
   import("../components/ResourcesPage").then((m) => ({ default: m.ResourcesPage })),
 );
 
+const MockExamPage = lazy(() =>
+  import("../components/MockExamPage").then((m) => ({ default: m.MockExamPage })),
+);
+
 function Home() {
   const [isProgressOpen, setIsProgressOpen] = useQueryState(
     "progress",
@@ -25,6 +29,7 @@ function Home() {
     "resources",
     parseAsBoolean.withDefault(false),
   );
+  const [showExam, setShowExam] = useQueryState("exam", parseAsBoolean.withDefault(false));
   const filters = useQuestionFilters();
   const { filteredQuestions, viewTitle, sources } = useQuestionExplorer(filters);
 
@@ -42,6 +47,14 @@ function Home() {
     return (
       <Suspense fallback={null}>
         <ResourcesPage onClose={() => void setShowResources(null)} />
+      </Suspense>
+    );
+  }
+
+  if (showExam) {
+    return (
+      <Suspense fallback={null}>
+        <MockExamPage onClose={() => void setShowExam(null)} />
       </Suspense>
     );
   }
@@ -121,6 +134,25 @@ function Home() {
       </div>
 
       <div className="fixed bottom-6 right-6 z-20 flex items-center gap-2">
+        <button
+          onClick={() => void setShowExam(true)}
+          className="flex items-center gap-2 bg-[var(--bg2)] text-[var(--text)] border border-[var(--border)] px-4 py-2.5 rounded-full shadow-lg hover:scale-105 transition-all active:scale-95 font-bold text-sm"
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+          Mock Exam
+        </button>
         <button
           onClick={() => void setShowResources(true)}
           className="flex items-center gap-2 bg-[var(--bg2)] text-[var(--text)] border border-[var(--border)] px-4 py-2.5 rounded-full shadow-lg hover:scale-105 transition-all active:scale-95 font-bold text-sm"

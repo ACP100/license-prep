@@ -1,5 +1,6 @@
 import katex from "katex";
 import { useMemo } from "react";
+import { formulaLegendFor } from "../data/formulaGlossary";
 
 interface RichTextProps {
   content: string | null | undefined;
@@ -10,6 +11,9 @@ interface RichTextProps {
 // code, bullet lists, paragraphs, raw <figure>/<img> passthrough) plus KaTeX
 // math for $$...$$ and $...$ spans. Not a general-purpose markdown renderer —
 // just enough for the data this site ships with.
+//
+// Display formulas ($$...$$) that match a known named formula also get a
+// "Where:" legend spelling out what each symbol means (see formulaGlossary.ts).
 function renderRich(content: string): string {
   const mathSpans: string[] = [];
   const withTokens = content.replace(/\$\$(.+?)\$\$|\$(.+?)\$/gs, (_match, display, inline) => {
@@ -19,6 +23,12 @@ function renderRich(content: string): string {
       html = katex.renderToString(math, { displayMode: false, throwOnError: false });
     } catch {
       html = math;
+    }
+    if (display) {
+      const legend = formulaLegendFor(display);
+      if (legend) {
+        html = `<span class="formula-with-legend">${html}<span class="formula-legend">Where: ${legend}</span></span>`;
+      }
     }
     mathSpans.push(html);
     return `@@MATH${mathSpans.length - 1}@@`;

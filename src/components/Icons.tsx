@@ -63,3 +63,30 @@ export function XCircle({ size = 24, ...props }: IconProps) {
     </svg>
   );
 }
+
+export function Clock({ size = 24, ...props }: IconProps) {
+  return (
+    <svg {...base(size, props)}>
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </svg>
+  );
+}
+
+export function Flag({ size = 24, ...props }: IconProps) {
+  return (
+    <svg {...base(size, props)}>
+      <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+      <line x1="4" y1="22" x2="4" y2="15" />
+    </svg>
+  );
+}
+
+export function FlagFilled({ size = 24, ...props }: IconProps) {
+  return (
+    <svg {...base(size, props)} fill="currentColor" stroke="none">
+      <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+      <rect x="3" y="15" width="1.5" height="7" rx="0.75" />
+    </svg>
+  );
+}
